@@ -12,7 +12,7 @@
 # the three integers after the opcode indicate where the inputs and outputs are, not their values.
 
 # Once you're done processing an opcode, move to the next one by stepping forward 4 positions.
-
+require './common.rb'
 class IntcodeProgram
   attr_accessor :done, :memory, :position
 
@@ -67,7 +67,7 @@ test_intcode([1,1,1,4,99,5,6,0,99], [30,1,1,4,2,5,6,0,99])
 
 
 
-intcode = File.open('inputs/2.txt').readline.split(',').map!(&:to_i)
+intcode = AdventOfCode::inputs(2).first.split(',').map!(&:to_i)
 output = 0
 noun = -1
 while output != 19690720 && noun < 100

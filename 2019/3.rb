@@ -1,5 +1,4 @@
-require './common.rb'
-wire_paths = AdventOfCode::inputs(3).map { |path| path.split(',') } 
+require './lib/common.rb'
 
 class Point
   attr_accessor :x, :y
@@ -119,23 +118,24 @@ class Panel
 end  
     
 
-def test_as_the_crow_flies(input, expected)
-  puts Panel.new(input).min_distance_from_origin == expected ? 'Pass' : 'Fail'
+def test_as_the_crow_flies(input)
+  Panel.new(input).min_distance_from_origin
 end
 
-test_as_the_crow_flies [%w[R8 U5 L5 D3], %w[U7 R6 D4 L4]], 6
-test_as_the_crow_flies [%w[R75 D30 R83 U83 L12 D49 R71 U7 L72],%w[U62 R66 U55 R34 D71 R55 D58 R83]], 159
 
-puts "distance of closest as the crow flies: #{Panel.new(wire_paths).min_distance_from_origin}"
+AdventOfCode::test(6) { test_as_the_crow_flies [%w[R8 U5 L5 D3], %w[U7 R6 D4 L4]] }
+AdventOfCode::test(159) { test_as_the_crow_flies [%w[R75 D30 R83 U83 L12 D49 R71 U7 L72],%w[U62 R66 U55 R34 D71 R55 D58 R83]] }
+
+wire_paths = AdventOfCode::inputs(3).map { |path| path.split(',') } 
+puts "3A: Distance of closest as the crow flies: #{Panel.new(wire_paths).min_distance_from_origin}"
 puts "-------\n"
 
-def test_steps(input, expected)
-  closest = Panel.new(input).min_step_distance
-  puts  closest == expected ? 'Pass' : 'Fail'
+def test_steps(input)
+  Panel.new(input).min_step_distance
 end
 
 
-test_steps [%w[R75 D30 R83 U83 L12 D49 R71 U7 L72],%w[U62 R66 U55 R34 D71 R55 D58 R83]], 610
-test_steps [%w[R98 U47 R26 D63 R33 U87 L62 D20 R33 U53 R51], %w[U98 R91 D20 R16 D67 R40 U7 R15 U6 R7]],  410
+AdventOfCode::test(610) { test_steps [%w[R75 D30 R83 U83 L12 D49 R71 U7 L72],%w[U62 R66 U55 R34 D71 R55 D58 R83]] }
+AdventOfCode::test(410) { test_steps [%w[R98 U47 R26 D63 R33 U87 L62 D20 R33 U53 R51], %w[U98 R91 D20 R16 D67 R40 U7 R15 U6 R7]] }
 
-puts "distance of closest by steps: #{Panel.new(wire_paths).min_step_distance}"
+puts "3B: Distance of closest by steps: #{Panel.new(wire_paths).min_step_distance}"

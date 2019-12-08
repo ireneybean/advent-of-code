@@ -13,78 +13,21 @@
 
 # Once you're done processing an opcode, move to the next one by stepping forward 4 positions.
 require './lib/common.rb'
-class IntcodeProgram
-  attr_accessor :done, :memory, :position
-
-  def initialize(intcode)
-    @memory = intcode.clone
-    @done = false
-    @position = 0
-  end
-  
-  def run
-    while !done
-      do_opcode
-      self.position = self.position + @hopsize
-    end  
-    self.memory[0]
-  end
-  
-  def do_opcode
-    # puts "processing opcode at: #{position}: #{self.memory[self.position]}"
-    case opcode
-    when 1
-      @hopsize = 4
-      add
-      # puts "add #{self.memory[a1_position]} to #{self.memory[a2_position]}"
-    when 2
-      @hopsize = 4
-      multiply
-    when 99
-      @hopsize = 1
-      self.done = true
-    else
-      # puts self.memory.join(',')
-      raise "Something has gone wrong, input at #{self.position} is #{self.memory[self.position]}"
-    end
-  end
-  
-  def add
-    self.memory[write_position] = val(1) + val(2)
-  end
-  
-  def multiply
-    self.memory[write_position] = val(1) * val(2)
-  end  
-  
-  private
-  
-  def opcode
-    self.memory[self.position]
-  end
-  
-  def val(num)
-    position = self.memory[self.position + num]
-    self.memory[position]
-  end
-
-  def write_position
-    self.memory[self.position + 3]
-  end      
-end
+require './lib/intcode_program.rb'
 
 
 
-def test_intcode(input, expected)
+def test_intcode(input)
   program = IntcodeProgram.new(input)
   program.run 
-  puts program.memory == expected ? 'Pass' : 'Fail'
+  program.memory 
 end
 
-test_intcode([1,0,0,0,99], [2,0,0,0,99])
-test_intcode([2,3,0,3,99], [2,3,0,6,99])
-test_intcode([2,4,4,5,99,0], [2,4,4,5,99,9801])
-test_intcode([1,1,1,4,99,5,6,0,99], [30,1,1,4,2,5,6,0,99])
+AdventOfCode::test([2,0,0,0,99]) { test_intcode([1,0,0,0,99]) }
+AdventOfCode::test([2,3,0,6,99]) { test_intcode([2,3,0,3,99])  }
+AdventOfCode::test([2,4,4,5,99,9801]) { test_intcode([2,4,4,5,99,0]) }
+AdventOfCode::test([30,1,1,4,2,5,6,0,99]) { test_intcode([1,1,1,4,99,5,6,0,99]) }
+
 
 intcode = AdventOfCode::inputs(2).first.split(',').map!(&:to_i)
 output = 0

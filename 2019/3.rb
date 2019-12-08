@@ -119,10 +119,6 @@ class Panel
 end  
     
 
-
-
-
-
 def test_as_the_crow_flies(input, expected)
   puts Panel.new(input).min_distance_from_origin == expected ? 'Pass' : 'Fail'
 end
@@ -132,11 +128,6 @@ test_as_the_crow_flies [%w[R75 D30 R83 U83 L12 D49 R71 U7 L72],%w[U62 R66 U55 R3
 
 puts "distance of closest as the crow flies: #{Panel.new(wire_paths).min_distance_from_origin}"
 puts "-------\n"
-
-
-
-
-
 
 def test_steps(input, expected)
   closest = Panel.new(input).min_step_distance

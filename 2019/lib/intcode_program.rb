@@ -1,36 +1,49 @@
 module Intcode
   class Opcode
     attr_reader :size
+    attr_accessor :next
     
-    def initialize(opcode)
-      parse_instruction(opcode)
+    def initialize(program)
+      @program = program
+      parse_instruction(program.memory[program.position])
       case @code
-      when 1,2
+      when 1,2,7,8
         @size = 4
       when 3,4  
         @size = 2
+      when 5,6
+        @size = 3  
       when 99
         @size = 1
       else
         # puts self.memory.join(',')
-        raise "Something has gone wrong, input is #{opcode}"
+        raise "Something has gone wrong, input is #{@code}"
       end
+      @next = program.position + @size
     end
     
-    def run(program)
+    def run
+      # puts "program is: #{@program.memory}"
+      # puts "code is #{@code}"
       case @code
-        
       when 1
-        program.add
+        @program.add
       when 2
-        program.multiply
+        @program.multiply
       when 3
-        user_input = 1
-        program.store(user_input)
+        @program.store
       when 4
-        program.output    
+        @program.output  
+      when 5
+        @program.jump_if_true
+      when 6
+        @program.jump_if_false
+      when 7
+        @program.less_than
+      when 8  
+        @program.equals
       when 99
-        program.done = true
+        @program.done = true
       end
     end  
     
@@ -58,26 +71,29 @@ module Intcode
   end   
    
   class Program
-    attr_accessor :done, :memory, :position
+    attr_accessor :done, :memory, :position, :outputs
 
-    def initialize(intcode)
+    def initialize(intcode, inputs = [])
       @memory = intcode.clone
       @done = false
       @position = 0
+      @inputs = [inputs].flatten
     end
   
     def run
+      # puts "\n\nPROGRAM IS: #{self.memory}"
       while !done
         do_next_instruction
-        advance
+        jump_to_next
       end  
       self.memory[0]
     end
   
     def do_next_instruction
       # puts "processing opcode at: #{position}: #{self.memory[self.position]}"
-      @current_opcode = Opcode.new(self.memory[self.position])
-      @current_opcode.run(self)
+      # puts "POSITION IS #{self.position}"
+      @current_opcode = Opcode.new(self)
+      @current_opcode.run
     end
   
     def add
@@ -88,12 +104,38 @@ module Intcode
       self.memory[write_position] = @current_opcode.param_1(self) * @current_opcode.param_2(self)
     end  
     
-    def store(input)
+    def store
+      input = @inputs.shift
+      # puts "input is #{input}"
+      # puts "write it to #{write_position}"
       self.memory[write_position] = input
     end
     
     def output
-      puts "Output: #{@current_opcode.param_1(self)}"
+      @outputs ||= []
+      @outputs << @current_opcode.param_1(self)
+      puts "Output: #{@outputs.last}"
+    end
+    
+    def jump_if_true
+      if @current_opcode.param_1(self) != 0
+        @current_opcode.next = @current_opcode.param_2(self)
+      end  
+    end
+    
+    def jump_if_false
+      # puts "Jump to #{@current_opcode.param_2(self)} if #{@current_opcode.param_1(self)} is 0"
+      if @current_opcode.param_1(self) == 0
+        @current_opcode.next = @current_opcode.param_2(self)
+      end  
+    end
+    
+    def less_than
+      self.memory[write_position] = @current_opcode.param_1(self) < @current_opcode.param_2(self) ? 1 : 0
+    end
+    
+    def equals
+      self.memory[write_position] = @current_opcode.param_1(self) == @current_opcode.param_2(self) ? 1 : 0
     end
     
     def val_of_address_at_offset(num)
@@ -111,8 +153,9 @@ module Intcode
       self.memory[self.position + @current_opcode.size - 1]
     end 
     
-    def advance
-      self.position = self.position + @current_opcode.size
+    def jump_to_next
+      self.position = @current_opcode.next
+      # puts "New position is #{self.position}"
     end  
            
   end

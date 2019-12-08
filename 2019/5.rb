@@ -3,4 +3,4 @@ require './lib/intcode_program.rb'
 
 intcode = AdventOfCode::inputs(5).first.split(',').map!(&:to_i)
 
-
+Intcode::Program.new(intcode).run

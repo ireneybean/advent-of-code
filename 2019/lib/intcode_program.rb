@@ -19,6 +19,7 @@ module Intcode
     
     def run(program)
       case @code
+        
       when 1
         program.add
       when 2
@@ -33,7 +34,21 @@ module Intcode
       end
     end  
     
+    def param_1(program)
+      param_num(1, program)
+    end
+    
+    def param_2(program)
+      param_num(2, program)
+    end
+    
     private 
+    
+    def param_num(num, program)
+      mode = @param_modes[num-1]
+      return program.val_of_address_at_offset(num) if mode == 0
+      return program.val_at_offset(num)
+    end  
     
     def parse_instruction(code)
       full_code = "%05d" % code
@@ -63,15 +78,14 @@ module Intcode
       # puts "processing opcode at: #{position}: #{self.memory[self.position]}"
       @current_opcode = Opcode.new(self.memory[self.position])
       @current_opcode.run(self)
-
     end
   
     def add
-      self.memory[write_position] = val_at(1) + val_at(2)
+      self.memory[write_position] = @current_opcode.param_1(self) + @current_opcode.param_2(self)
     end
   
     def multiply
-      self.memory[write_position] = val_at(1) * val_at(2)
+      self.memory[write_position] = @current_opcode.param_1(self) * @current_opcode.param_2(self)
     end  
     
     def store(input)
@@ -79,15 +93,19 @@ module Intcode
     end
     
     def output
-      puts "Output: #{self.memory[write_position]}"
+      puts "Output: #{@current_opcode.param_1(self)}"
+    end
+    
+    def val_of_address_at_offset(num)
+      position = val_at_offset(num)
+      self.memory[position]
+    end
+    
+    def val_at_offset(num)
+      self.memory[self.position + num]
     end
     
     private
-  
-    def val_at(num)
-      position = self.memory[self.position + num]
-      self.memory[position]
-    end
 
     def write_position
       self.memory[self.position + @current_opcode.size - 1]

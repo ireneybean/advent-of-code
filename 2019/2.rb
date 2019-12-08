@@ -18,7 +18,7 @@ require './lib/intcode_program.rb'
 
 
 def test_intcode(input)
-  program = IntcodeProgram.new(input)
+  program = Intcode::Program.new(input)
   program.run 
   program.memory 
 end
@@ -40,7 +40,7 @@ while output != 19690720 && noun < 100
     verb = verb + 1
     intcode[2] = verb
 
-    program = IntcodeProgram.new(intcode)
+    program = Intcode::Program.new(intcode)
     output = begin
       program.run
     rescue => e

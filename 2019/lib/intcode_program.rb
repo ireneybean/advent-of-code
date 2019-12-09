@@ -86,7 +86,7 @@ module Intcode
         do_next_instruction
         jump_to_next
       end  
-      self.memory[0]
+      outputs&.last 
     end
   
     def do_next_instruction
@@ -114,7 +114,7 @@ module Intcode
     def output
       @outputs ||= []
       @outputs << @current_opcode.param_1(self)
-      puts "Output: #{@outputs.last}"
+      # puts "Output: #{@outputs.last}"
     end
     
     def jump_if_true

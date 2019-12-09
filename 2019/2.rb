@@ -43,6 +43,7 @@ while output != 19690720 && noun < 100
     program = Intcode::Program.new(intcode)
     output = begin
       program.run
+      program.memory[0]
     rescue => e
       puts e
       program.memory[0]

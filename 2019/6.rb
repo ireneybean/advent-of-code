@@ -47,19 +47,7 @@ AdventOfCode::test(42) { test_map.count }
 map = OrbitMap.new(AdventOfCode::inputs(6))
 puts "Total orbits #{map.count}"
 
-test_map=OrbitMap.new(['COM)B',
-'B)C',
-'C)D',
-'D)E',
-'E)F',
-'B)G',
-'G)H',
-'D)I',
-'E)J',
-'J)K',
-'K)L',
-'K)YOU',
-'I)SAN'])
+test_map=OrbitMap.new(['COM)B','B)C','C)D','D)E','E)F','B)G','G)H','D)I','E)J','J)K','K)L','K)YOU','I)SAN'])
 
 AdventOfCode::test(4) { test_map.orbital_transfers('YOU', 'SAN') }
 puts "Orbital transfers between Santa and I: #{map.orbital_transfers('YOU', 'SAN')}"

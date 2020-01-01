@@ -3,7 +3,7 @@ require './lib/intcode_program.rb'
 
 intcode = AdventOfCode::inputs(5).first.split(',').map!(&:to_i)
 
-Intcode::Program.new(intcode,1).run
+puts Intcode::Program.new(intcode,1).run
 
 
 puts
@@ -13,7 +13,6 @@ test_in = [3,9,8,9,10,9,4,9,99,-1,8]
 AdventOfCode::test(1) do
   program = Intcode::Program.new(test_in, 8)
   program.run
-  program.outputs.first
 end
 
 AdventOfCode::test(0) do
@@ -71,7 +70,7 @@ test_in = [3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9]
 
 AdventOfCode::test(0) do
   program = Intcode::Program.new(test_in, 0)
-  program.run 
+  program.run
 end
 AdventOfCode::test(1) do
   program = Intcode::Program.new(test_in, 1)
@@ -116,20 +115,17 @@ test_in = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 AdventOfCode::test(999) do
   program = Intcode::Program.new(test_in, 7)
   program.run
-  program.outputs.first
 end
 
 AdventOfCode::test(1000) do
   program = Intcode::Program.new(test_in, 8)
   program.run
-  program.outputs.first
 end
 
 AdventOfCode::test(1001) do
   program = Intcode::Program.new(test_in, 9)
   program.run
-  program.outputs.first
 end
 
 puts "Getting code for System 5"
-Intcode::Program.new(intcode, 5).run
+puts Intcode::Program.new(intcode, 5).run

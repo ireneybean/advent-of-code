@@ -29,3 +29,6 @@ require './lib/intcode_program.rb'
 BOOST = AdventOfCode::inputs(9).first.split(',').map(&:to_i).freeze
 program = Intcode::Program.new(BOOST, 1)
 puts program.run
+
+program = Intcode::Program.new(BOOST, 2)
+puts program.run

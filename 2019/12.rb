@@ -1,3 +1,4 @@
+DEBUG = true
 class MoonSystem
   attr_reader :moons
 
@@ -5,14 +6,14 @@ class MoonSystem
     @moons = moons
   end
 
-  def advance_time(i)
+  def fast_forward(i)
     i.times.with_index do |index|
       apply_gravity
       moons.each(&:update_position)
-      puts "AFTER #{index} STEPS, #{energy}"
+      puts "AFTER #{index} STEPS, #{energy}" if DEBUG
       puts @moons.map {|moon| moon.to_s}
     end
-    puts "TOTAL ENERGY: #{energy}"
+    puts "TotalEnergy in the system: #{energy}"
   end
 
   def energy
@@ -25,14 +26,13 @@ class MoonSystem
     end
   end
 end
+
 class Moon
-  attr_accessor :pos_x, :pos_y, :pos_z, :vel_x, :vel_y, :vel_z
+  attr_accessor :position, :velocity
 
   def initialize(x:, y:, z:)
-    @pos_x = x
-    @pos_y = y
-    @pos_z = z
-    @vel_x = @vel_y = @vel_z = 0
+    @position = [x, y, z]
+    @velocity = [0, 0, 0]
   end
 
   #
@@ -42,9 +42,7 @@ class Moon
   # (because 3 < 5). However, if the positions on a given axis are the same, the velocity on that axis does not change
   # for that pair of moons.
   def apply_gravity(other_moon)
-    apply_gravity_x(other_moon)
-    apply_gravity_y(other_moon)
-    apply_gravity_z(other_moon)
+    (0..2).to_a.each {|axis| apply_gravity_to_axis(axis, other_moon) }
   end
 
   def calculate_gravity_modifier(other, mine)
@@ -52,32 +50,20 @@ class Moon
     (other - mine).positive? ? 1 : -1
   end
 
-  def apply_gravity_x(other_moon)
-    delta_x = calculate_gravity_modifier(other_moon.pos_x, pos_x)
-    self.vel_x = vel_x + delta_x
-    other_moon.vel_x = other_moon.vel_x - delta_x
+  def apply_gravity_to_axis(axis, other_moon)
+    delta = calculate_gravity_modifier(other_moon.position[axis], position[axis])
+    self.velocity[axis] = velocity[axis] + delta
+    other_moon.velocity[axis] = other_moon.velocity[axis] - delta
   end
 
 
-  def apply_gravity_y(other_moon)
-    delta_y = calculate_gravity_modifier(other_moon.pos_y, pos_y)
-    self.vel_y = vel_y + delta_y
-    other_moon.vel_y = other_moon.vel_y - delta_y
-  end
 
-  def apply_gravity_z(other_moon)
-    delta_z = calculate_gravity_modifier(other_moon.pos_z, pos_z)
-    self.vel_z = vel_z + delta_z
-    other_moon.vel_z = other_moon.vel_z - delta_z
-  end
 
   # simply add the velocity of each moon to its own position. For example, if Europa has a position of x=1, y=2, z=3
   # and a velocity of x=-2, y=0,z=3, then its new position would be x=-1, y=2, z=6. This process does not modify
   # the velocity of any moon.
   def update_position
-    @pos_x = @pos_x + @vel_x
-    @pos_y = @pos_y + @vel_y
-    @pos_z = @pos_z + @vel_z
+    (0..2).to_a.each {|axis| position[axis] = position[axis] + velocity[axis] }
   end
 
   # total energy for a single moon is its potential energy multiplied by its kinetic energy.
@@ -87,16 +73,16 @@ class Moon
 
   # A moon's potential energy is the sum of the absolute values of its x, y, and z position coordinates.
   def potential_energy
-    @pos_x.abs + @pos_y.abs + @pos_z.abs
+    position.inject(0) {|sum, p| sum + p.abs  }
   end
 
   def to_s
-    "pos=<x= #{pos_x}, y=#{pos_y}, z=#{pos_z}>, vel=< x=#{@vel_x}, y=#{@vel_y}, z=#{@vel_z}>"
+    "pos=<x= #{position[0]}, y=#{position[1]}, z=#{position[2]}>, vel=< x=#{velocity[0]}, y=#{velocity[1]}, z=#{velocity[2]}>"
   end
 
   # A moon's kinetic energy is the sum of the absolute values of its velocity coordinates.
   def kinetic_energy
-    @vel_x.abs + @vel_y.abs + @vel_z.abs
+    velocity.inject(0) {|sum, v| sum + v.abs  }
   end
 end
 
@@ -111,6 +97,6 @@ callisto = Moon.new(x: -3, y: 18, z: 9)
 
 moons = MoonSystem.new([io, europa, ganymede, callisto])
 puts moons.moons.map(&:to_s)
-moons.advance_time(1000)
+moons.fast_forward(1000)
 
 

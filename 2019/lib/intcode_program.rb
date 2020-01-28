@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 module Intcode
   class ParameterMode
@@ -150,7 +150,7 @@ module Intcode
         do_next_instruction
         jump_to_next unless done
       end
-      puts "#{name} IS DONE"
+      puts "#{name} IS DONE" if DEBUG
 
       # this needs to be here for 7A to work, but needs
       # to be commented out for 7B to work
@@ -164,7 +164,7 @@ module Intcode
         do_next_instruction
         jump_to_next unless done
       end
-      puts "#{name} IS DONE"
+      puts "#{name} IS DONE" if DEBUG
     end
 
     def do_next_instruction
@@ -184,7 +184,7 @@ module Intcode
     end
 
     def val_of_address_at_offset_relative(num)
-      puts "OFFSET POSITION FOR NUM #{num} is #{val_at_offset(num)}"
+      puts "OFFSET POSITION FOR NUM #{num} is #{val_at_offset(num)}" if DEBUG
       self.memory[val_at_offset(num) + relative_base]  || 0
     end
 

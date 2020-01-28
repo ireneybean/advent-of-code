@@ -13,7 +13,12 @@ module AdventOfCode
       "Failed: Expected #{expected}, received #{actual}"
     end
     puts result
-  end    
+  end
+
+  def intcode_from_file(day)
+    inputs(day).first.split(',').map(&:to_i)
+  end
+
 end    
 
 include AdventOfCode
